@@ -6,7 +6,7 @@ import yaml
 class YamlConfig:
     cur_path: str = os.path.dirname(os.path.abspath(__file__))
     
-    def __init__(self, file_path: str = f"{cur_path}/config.yml"):
+    def __init__(self, file_path: str = f"{cur_path}/config.yml") -> None:
         self.file_path = file_path
     
     def exists(self) -> bool:
