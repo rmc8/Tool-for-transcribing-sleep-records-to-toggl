@@ -22,13 +22,14 @@ class TogglAPI:
         return res.json()
     
     def create_time_entry(self, description: str, duration: int, start: str,
-                          created_with: str = "Python", **kwargs) -> dict:
+                          stop: str, created_with: str = "Python", **kwargs) -> dict:
         # Required
         payload: dict = {
             "time_entry": {
                 "description": description,
                 "duration": duration,
                 "start": start,
+                "stop": stop,
                 "created_with": created_with,
             }
         }
