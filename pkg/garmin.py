@@ -36,7 +36,7 @@ class GarminAPI:
             yesterday = tar_dt - timedelta(days=1)
             res: dict = self.client.get_sleep_data(tar_dt.isoformat())
             display: dict = res["dailySleepDTO"]
-            if display.get("sleepStartTimestampLocal") and display.get("sleepEndTimestampLocal"):
+            if display.get("sleepStartTimestampGMT") and display.get("sleepEndTimestampGMT"):
                 start = self.epoc2date(display["sleepStartTimestampGMT"], self.time_deff)
                 end = self.epoc2date(display["sleepEndTimestampGMT"], self.time_deff)
                 zone: str = "Z" if self.time_deff == 0 else f"+{self.time_deff:02}:00"
