@@ -1,3 +1,5 @@
 pyyaml
 pandas
 garminconnect
+python-dateutil
+requests

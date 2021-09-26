@@ -6,7 +6,7 @@ from pandas import DataFrame
 
 
 class GarminAPI:
-    def __init__(self, email: str, password: str, time_deff: int = -9):
+    def __init__(self, email: str, password: str, time_deff: int = 9):
         self.client = Garmin(email, password)
         self.client.login()
         self.time_deff: int = time_deff
@@ -25,20 +25,29 @@ class GarminAPI:
     
     def get_sleep_logs(self, dt_range: int) -> DataFrame:
         """
-        It retrieves sleep records in bulk and returns them in data frame format.
+        It retrieves sleep records in bulk and
+        returns them in data frame format.
         :param dt_range: Enter the number of days to go back in the log (dt_range >= 0).
         :return: Data frame containing sleep time
         """
         table: list = []
         for dt_offset in range(dt_range + 1):
-            print(dt_offset)
             tar_dt = (date.today() - timedelta(days=dt_offset))
+            yesterday = tar_dt - timedelta(days=1)
             res: dict = self.client.get_sleep_data(tar_dt.isoformat())
             display: dict = res["dailySleepDTO"]
             if display.get("sleepStartTimestampLocal") and display.get("sleepEndTimestampLocal"):
-                table.append({
-                    "Date": tar_dt,
-                    "sleepStart": self.epoc2date(display["sleepStartTimestampLocal"], self.time_deff),
-                    "sleepEnd": self.epoc2date(display["sleepEndTimestampLocal"], self.time_deff),
-                })
+                start = self.epoc2date(display["sleepStartTimestampGMT"], self.time_deff)
+                end = self.epoc2date(display["sleepEndTimestampGMT"], self.time_deff)
+                zone: str = "Z" if self.time_deff == 0 else f"+{self.time_deff:02}:00"
+                if self.time_deff < 0:
+                    zone = zone.replace("+-", "-")
+                record: dict = {
+                    "date": yesterday,
+                    "description": f"Sleep time on {yesterday}",
+                    "start": f"{(start - timedelta(hours=self.time_deff)).isoformat()}.000{zone}",
+                    "stop": f"{(end - timedelta(hours=self.time_deff)).isoformat()}.000{zone}",
+                    "duration": (end - start).seconds,
+                }
+                table.append(record)
         return DataFrame(table)

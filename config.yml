@@ -1,5 +1,13 @@
+time_zone: 9
 toggl:
-  token:
+  token: # Required
+  time_entry:
+    workspace_id:
+    project_id:
+    task_id:
+    billable: False # Not required
+    tags:
+      - 睡眠
 garmin:
-  email:
-  password:
+  email: # Required
+  password: # Required
